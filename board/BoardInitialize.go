@@ -15,6 +15,7 @@ func (B *Board) Initialize(indexes *[]string) {
 			*indexes = append(*indexes, pos)
 			B.Tiles[pos] = new(Tile)
 			B.Tiles[pos].IsWhite = iswhite
+			B.Tiles[pos].Occupied = false
 			iswhite = !iswhite
 		}
 		iswhite = !iswhite

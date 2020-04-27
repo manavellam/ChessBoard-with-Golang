@@ -8,6 +8,7 @@ import (
 
 //AllocatePieces allocates pieces randomly on the board
 func (B *Board) AllocatePieces(indexes []string) {
+
 	//Generates Aleatory numbers and shuffles the indexes
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)
