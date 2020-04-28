@@ -1,4 +1,4 @@
-package pieces
+package board
 
 //Queen represents a queen
 type Queen struct {
@@ -10,12 +10,20 @@ func (p *Queen) Move(pos string, newPos string) {
 
 }
 
-//IsMoveValid validates current moove
-func (p *Queen) IsMoveValid(pos string, newPos string) (bool, string) {
+//White tells if piece is white
+func (p *Queen) White() bool {
+	if p.IsWhite {
+		return true
+	}
+	return false
+}
+
+//MoveIfValid move the piece if valid
+func (p *Queen) MoveIfValid(pos string, newPos string, B *Board) bool {
 	//Piece in the way
 	//Piece of the same color
 
-	return true, ""
+	return true
 }
 
 //IsPiece returns the kind and colour of the piece
@@ -28,7 +36,7 @@ func (p *Queen) IsPiece() string {
 
 //IsUnicode prints unicode carachter
 func (p *Queen) IsUnicode() string {
-	if p.IsWhite {
+	if !p.IsWhite {
 		return `♕`
 	}
 	return `♛`
