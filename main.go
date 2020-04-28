@@ -53,7 +53,9 @@ func main() {
 			}
 		}
 		fmt.Println("Press Enter to continue")
-		//tm.Flush()
-		//tm.Clear()
+		fmt.Scanln()
+		tm.Flush()
+		tm.Clear()
+		tm.Flush()
 	}
 }

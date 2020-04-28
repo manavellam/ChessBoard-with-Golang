@@ -71,6 +71,7 @@ func (p *Pawn) MoveIfValid(pos string, newPos string, b *Board) bool {
 				if (y2-y1 == 1 || y2-y1 == -1) && b.Tiles[newPos].Occupied && !b.Tiles[newPos].Piece.White() {
 					b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
 					b.Tiles[pos].Occupied = false
+					fmt.Printf("%v captured in: %v\n", b.Tiles[pos].Piece.IsPiece(), newPos)
 					return true
 				}
 				fmt.Print("Move is not valid: Only allowed to capture black pieces\n")
@@ -94,6 +95,7 @@ func (p *Pawn) MoveIfValid(pos string, newPos string, b *Board) bool {
 				if (y2-y1 == 1 || y2-y1 == -1) && b.Tiles[newPos].Occupied && b.Tiles[newPos].Piece.White() {
 					b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
 					b.Tiles[pos].Occupied = false
+					fmt.Printf("%v captured in: %v\n", b.Tiles[pos].Piece.IsPiece(), newPos)
 					return true
 				}
 				fmt.Print("Move is not valid: Only allowed to capture white pieces\n")
