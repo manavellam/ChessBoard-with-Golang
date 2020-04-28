@@ -1,11 +1,17 @@
 package main
 
 import (
-	"Test/board"
 	"fmt"
+	"os"
+	"os/exec"
+
+	"Test/board"
+
+	tm "github.com/buger/goterm"
 )
 
 func main() {
+	//var Output *bufio.Writer = bufio.NewWriter(os.Stdout)
 	var MyBoard board.Board
 	var (
 		indexes []string
@@ -16,10 +22,9 @@ func main() {
 	MyBoard.AllocatePieces(indexes)
 
 	//Here the game begins
-
+	tm.Clear()
 	for {
 		//tm.MoveCursor(1, 1)
-		//tm.Clear()
 		MyBoard.PrintBoard()
 		for {
 			fmt.Print("Choose Piece: ")
@@ -39,14 +44,16 @@ func main() {
 			}
 			if _, ok := MyBoard.Tiles[destino]; ok == true {
 				if MyBoard.Tiles[piece].Piece.MoveIfValid(piece, destino, &MyBoard) {
-					//here check if move valid or not. Return info about pieces involved.
 					break
 				}
 			} else {
 				fmt.Print("Not a valid move \n")
 			}
 		}
-		fmt.Print("Press Enter to continue")
-		fmt.Scanln(&piece)
+		fmt.Println("Press Enter to continue")
+		//tm.Flush()
+		cmd := exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
 	}
 }

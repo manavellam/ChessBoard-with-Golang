@@ -1,5 +1,11 @@
 package board
 
+import (
+	"fmt"
+	"log"
+	"strconv"
+)
+
 //Queen represents a queen
 type Queen struct {
 	IsWhite bool
@@ -19,11 +25,193 @@ func (p *Queen) White() bool {
 }
 
 //MoveIfValid move the piece if valid
-func (p *Queen) MoveIfValid(pos string, newPos string, B *Board) bool {
-	//Piece in the way
-	//Piece of the same color
+func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
+	var (
+		//maps leters to numbers
+		lton = map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8}
+		//maps numbers to letters
+		ntol = make(map[int]string)
+	)
 
-	return true
+	for key, value := range lton {
+		ntol[value] = key
+	}
+	x1, _ := strconv.Atoi(string(pos[0]))
+	y1 := lton[string(pos[1])]
+	x2, _ := strconv.Atoi(string(newPos[0]))
+	y2 := lton[string(newPos[1])]
+
+	if ((y1-y2)*(y1-y2) == 4 && (x1-x2)*(x1-x2) == 1) || ((x1-x2)*(x1-x2) == 4 && (y1-y2)*(y1-y2) == 1) {
+		log.Print("LIKE A HORSE")
+		if !b.Tiles[newPos].Occupied {
+			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+			b.Tiles[newPos].Occupied = true
+			b.Tiles[pos].Occupied = false
+			return true
+		} else if b.Tiles[newPos].Piece.White() != p.IsWhite {
+			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+			b.Tiles[newPos].Occupied = true
+			b.Tiles[pos].Occupied = false
+			fmt.Printf("%v captured in: %v\n", b.Tiles[pos].Piece.IsPiece(), newPos)
+			return true
+		} else {
+			fmt.Println("Move not valid. There is a piece of the same color in  destiny")
+			return false
+		}
+	} else if x1 == x2 {
+		log.Print("LIKE A TOWER")
+		if y1 < y2 {
+			for i := y1 + 1; i <= y2; i++ {
+				if !b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied {
+					continue
+				} else if b.Tiles[fmt.Sprint(x1, ntol[i])].Piece.White() != p.IsWhite {
+					b.Tiles[fmt.Sprint(x1, ntol[i])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(x1, ntol[i])].Piece
+					b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied = true
+					b.Tiles[pos].Occupied = false
+					fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), x1, ntol[i])
+					return true
+				} else {
+					fmt.Print("Move not valid: There is a piece of the same color in the way")
+					return false
+				}
+			}
+			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+			b.Tiles[newPos].Occupied = true
+			b.Tiles[pos].Occupied = false
+			return true
+		}
+		for i := y1 - 1; i >= y2; i-- {
+			if !b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied {
+				continue
+			} else if b.Tiles[fmt.Sprint(x1, ntol[i])].Piece.White() != p.IsWhite {
+				b.Tiles[fmt.Sprint(x1, ntol[i])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(x1, ntol[i])].Piece
+				b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied = true
+				b.Tiles[pos].Occupied = false
+				fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), x1, ntol[i])
+				return true
+			} else {
+				fmt.Print("Move not valid: There is a piece of the same color in the way\n")
+				return false
+			}
+		}
+		b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+		b.Tiles[newPos].Occupied = true
+		b.Tiles[pos].Occupied = false
+		return true
+	} else if y1 == y2 {
+		if x1 < x2 {
+			for i := x1 + 1; i <= x2; i++ {
+				if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
+					continue
+				} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
+					b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
+					b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
+					b.Tiles[pos].Occupied = false
+					fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
+					return true
+				} else {
+					fmt.Print("Move not valid: There is a piece of the same color in the way\n")
+					return false
+				}
+
+			}
+			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+			b.Tiles[newPos].Occupied = true
+			b.Tiles[pos].Occupied = false
+			return true
+		}
+		for i := x1 - 1; i >= x2; i-- {
+			if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
+				continue
+			} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
+				b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
+				b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
+				b.Tiles[pos].Occupied = false
+				fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
+				return true
+			} else {
+				fmt.Print("Move not valid: There is a piece of the same color in the way\n")
+				return false
+			}
+		}
+		b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+		b.Tiles[newPos].Occupied = true
+		b.Tiles[pos].Occupied = false
+		return true
+	} else if (x1-x2)*(x1-x2) == (y1-y2)*(y1-y2) {
+		if x1 < x2 {
+			for i := x1 + 1; i <= x2; i++ {
+				if y1 < y2 {
+					y1++
+					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
+						continue
+					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
+						b.Tiles[pos].Occupied = false
+						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
+						return true
+					} else {
+						fmt.Print("Move not valid: There is a piece of the same color in the way\n")
+						return false
+					}
+				} else {
+					y1--
+					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
+						continue
+					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
+						b.Tiles[pos].Occupied = false
+						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
+						return true
+					} else {
+						fmt.Print("Move not valid: There is a piece of the same color in the way\n")
+						return false
+					}
+				}
+			}
+
+		} else {
+			for i := x1 - 1; i >= x2; i-- {
+				if y1 < y2 {
+					y1++
+					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
+						continue
+					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
+						b.Tiles[pos].Occupied = false
+						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
+						return true
+					} else {
+						fmt.Print("Move not valid: There is a piece of the same color in the way\n")
+						return false
+					}
+				} else {
+					y1--
+					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
+						continue
+					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
+						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
+						b.Tiles[pos].Occupied = false
+						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
+						return true
+					} else {
+						fmt.Print("Move not valid: There is a piece of the same color in the way\n")
+						return false
+					}
+				}
+			}
+		}
+		b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+		b.Tiles[newPos].Occupied = true
+		b.Tiles[pos].Occupied = false
+		return true
+	}
+	fmt.Println("Move not valid. Queen must move as horse, bishop or tower.")
+	return false
 }
 
 //IsPiece returns the kind and colour of the piece
