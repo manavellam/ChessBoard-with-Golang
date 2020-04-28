@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 
 	"Test/board"
 
@@ -22,9 +20,13 @@ func main() {
 	MyBoard.AllocatePieces(indexes)
 
 	//Here the game begins
+	tm.MoveCursor(0, 0)
 	tm.Clear()
+	tm.Flush()
 	for {
-		//tm.MoveCursor(1, 1)
+		tm.MoveCursor(0, 0)
+		tm.Clear()
+		tm.Flush()
 		MyBoard.PrintBoard()
 		for {
 			fmt.Print("Choose Piece: ")
@@ -52,8 +54,6 @@ func main() {
 		}
 		fmt.Println("Press Enter to continue")
 		//tm.Flush()
-		cmd := exec.Command("cmd", "/c", "cls")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
+		//tm.Clear()
 	}
 }
