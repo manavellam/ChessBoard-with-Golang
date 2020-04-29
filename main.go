@@ -3,9 +3,8 @@ package main
 import (
 	"fmt"
 
-	"Test/board"
-
 	tm "github.com/buger/goterm"
+	"github.com/manavellam/ChessBoard-with-Golang/board"
 )
 
 func main() {
