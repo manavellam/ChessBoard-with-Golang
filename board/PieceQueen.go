@@ -189,6 +189,6 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 		p.Move(pos, newPos, b)
 		return true
 	}
-	fmt.Println("Move not valid. Queen must move as horse, bishop or tower.")
+	fmt.Println("Move not valid. Queen must move as bishop or tower.")
 	return false
 }
