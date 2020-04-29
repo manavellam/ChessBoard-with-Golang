@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	tm "github.com/buger/goterm"
 	"github.com/manavellam/ChessBoard-with-Golang/board"
 )
 
@@ -18,13 +17,7 @@ func main() {
 	MyBoard.AllocatePieces(indexes)
 
 	//Here the game begins
-	tm.MoveCursor(0, 0)
-	tm.Clear()
-	tm.Flush()
 	for {
-		tm.MoveCursor(0, 0)
-		tm.Clear()
-		tm.Flush()
 		MyBoard.PrintBoard()
 		for {
 			fmt.Print("Choose Piece: ")
@@ -52,8 +45,5 @@ func main() {
 		}
 		fmt.Println("Press Enter to continue")
 		fmt.Scanln()
-		tm.Flush()
-		tm.Clear()
-		tm.Flush()
 	}
 }
