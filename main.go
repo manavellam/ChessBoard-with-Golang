@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	//var Output *bufio.Writer = bufio.NewWriter(os.Stdout)
 	var MyBoard board.Board
 	var (
 		indexes []string

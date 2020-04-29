@@ -11,8 +11,10 @@ type Pawn struct {
 }
 
 //Move try to move the pawn to its new position
-func (p *Pawn) Move(pos string, newPos string) {
-
+func (p *Pawn) Move(pos string, newPos string, b *Board) {
+	b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+	b.Tiles[newPos].Occupied = true
+	b.Tiles[pos].Occupied = false
 }
 
 //IsPiece returns the kind and colour of the piece
@@ -60,17 +62,14 @@ func (p *Pawn) MoveIfValid(pos string, newPos string, b *Board) bool {
 		if x2-x1 > 0 {
 			if y1 == y2 {
 				if !b.Tiles[newPos].Occupied {
-					b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-					b.Tiles[newPos].Occupied = true
-					b.Tiles[pos].Occupied = false
+					p.Move(pos, newPos, b)
 					return true
 				}
 				fmt.Print("Move is not valid: Tile is occupied\n")
 
 			} else {
 				if (y2-y1 == 1 || y2-y1 == -1) && b.Tiles[newPos].Occupied && !b.Tiles[newPos].Piece.White() {
-					b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-					b.Tiles[pos].Occupied = false
+					p.Move(pos, newPos, b)
 					fmt.Printf("%v captured in: %v\n", b.Tiles[pos].Piece.IsPiece(), newPos)
 					return true
 				}
@@ -84,17 +83,14 @@ func (p *Pawn) MoveIfValid(pos string, newPos string, b *Board) bool {
 		if x2-x1 < 0 {
 			if y1 == y2 {
 				if !b.Tiles[newPos].Occupied {
-					b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-					b.Tiles[newPos].Occupied = true
-					b.Tiles[pos].Occupied = false
+					p.Move(pos, newPos, b)
 					return true
 				}
 				fmt.Print("Move is not valid: Tile is occupied\n")
 
 			} else {
 				if (y2-y1 == 1 || y2-y1 == -1) && b.Tiles[newPos].Occupied && b.Tiles[newPos].Piece.White() {
-					b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-					b.Tiles[pos].Occupied = false
+					p.Move(pos, newPos, b)
 					fmt.Printf("%v captured in: %v\n", b.Tiles[pos].Piece.IsPiece(), newPos)
 					return true
 				}

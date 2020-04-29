@@ -11,7 +11,7 @@ type King struct {
 }
 
 //Move moves the piece to its new location if possible
-func (p *King) Move(pos string, newPos string) {
+func (p *King) Move(pos string, newPos string, b *Board) {
 
 }
 

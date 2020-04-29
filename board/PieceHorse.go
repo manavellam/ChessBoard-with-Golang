@@ -11,8 +11,10 @@ type Horse struct {
 }
 
 //Move moves the piece to its new location if possible
-func (p *Horse) Move(pos string, newPos string) {
-
+func (p *Horse) Move(pos string, newPos string, b *Board) {
+	b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+	b.Tiles[newPos].Occupied = true
+	b.Tiles[pos].Occupied = false
 }
 
 //White tells if piece is white
@@ -58,14 +60,10 @@ func (p *Horse) MoveIfValid(pos string, newPos string, b *Board) bool {
 
 	if ((y1-y2)*(y1-y2) == 4 && (x1-x2)*(x1-x2) == 1) || ((x1-x2)*(x1-x2) == 4 && (y1-y2)*(y1-y2) == 1) {
 		if !b.Tiles[newPos].Occupied {
-			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-			b.Tiles[newPos].Occupied = true
-			b.Tiles[pos].Occupied = false
+			p.Move(pos, newPos, b)
 			return true
 		} else if b.Tiles[newPos].Piece.White() != p.IsWhite {
-			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-			b.Tiles[newPos].Occupied = true
-			b.Tiles[pos].Occupied = false
+			p.Move(pos, newPos, b)
 			fmt.Printf("%v captured in: %v\n", b.Tiles[pos].Piece.IsPiece(), newPos)
 			return true
 		} else {

@@ -1,6 +1,6 @@
 package board
 
-//Board stores info related to
+//Board has 64 tiles.
 type Board struct {
 	Tiles map[string]*Tile
 }

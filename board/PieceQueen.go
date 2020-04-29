@@ -2,7 +2,6 @@ package board
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 )
 
@@ -12,8 +11,10 @@ type Queen struct {
 }
 
 //Move moves the piece to its new location if possible
-func (p *Queen) Move(pos string, newPos string) {
-
+func (p *Queen) Move(pos string, newPos string, b *Board) {
+	b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
+	b.Tiles[newPos].Occupied = true
+	b.Tiles[pos].Occupied = false
 }
 
 //White tells if piece is white
@@ -22,6 +23,22 @@ func (p *Queen) White() bool {
 		return true
 	}
 	return false
+}
+
+//IsPiece returns the kind and colour of the piece
+func (p *Queen) IsPiece() string {
+	if p.IsWhite {
+		return "White Queen"
+	}
+	return "Black Queen"
+}
+
+//IsUnicode prints unicode carachter
+func (p *Queen) IsUnicode() string {
+	if !p.IsWhite {
+		return `♕`
+	}
+	return `♛`
 }
 
 //MoveIfValid move the piece if valid
@@ -41,33 +58,13 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 	x2, _ := strconv.Atoi(string(newPos[0]))
 	y2 := lton[string(newPos[1])]
 
-	if ((y1-y2)*(y1-y2) == 4 && (x1-x2)*(x1-x2) == 1) || ((x1-x2)*(x1-x2) == 4 && (y1-y2)*(y1-y2) == 1) {
-		log.Print("LIKE A HORSE")
-		if !b.Tiles[newPos].Occupied {
-			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-			b.Tiles[newPos].Occupied = true
-			b.Tiles[pos].Occupied = false
-			return true
-		} else if b.Tiles[newPos].Piece.White() != p.IsWhite {
-			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-			b.Tiles[newPos].Occupied = true
-			b.Tiles[pos].Occupied = false
-			fmt.Printf("%v captured in: %v\n", b.Tiles[pos].Piece.IsPiece(), newPos)
-			return true
-		} else {
-			fmt.Println("Move not valid. There is a piece of the same color in  destiny")
-			return false
-		}
-	} else if x1 == x2 {
-		log.Print("LIKE A TOWER")
+	if x1 == x2 {
 		if y1 < y2 {
 			for i := y1 + 1; i <= y2; i++ {
 				if !b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied {
 					continue
 				} else if b.Tiles[fmt.Sprint(x1, ntol[i])].Piece.White() != p.IsWhite {
-					b.Tiles[fmt.Sprint(x1, ntol[i])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(x1, ntol[i])].Piece
-					b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied = true
-					b.Tiles[pos].Occupied = false
+					p.Move(pos, fmt.Sprint(x1, ntol[i]), b)
 					fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), x1, ntol[i])
 					return true
 				} else {
@@ -78,15 +75,14 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
 			b.Tiles[newPos].Occupied = true
 			b.Tiles[pos].Occupied = false
+
 			return true
 		}
 		for i := y1 - 1; i >= y2; i-- {
 			if !b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied {
 				continue
 			} else if b.Tiles[fmt.Sprint(x1, ntol[i])].Piece.White() != p.IsWhite {
-				b.Tiles[fmt.Sprint(x1, ntol[i])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(x1, ntol[i])].Piece
-				b.Tiles[fmt.Sprint(x1, ntol[i])].Occupied = true
-				b.Tiles[pos].Occupied = false
+				p.Move(pos, fmt.Sprint(x1, ntol[i]), b)
 				fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), x1, ntol[i])
 				return true
 			} else {
@@ -97,6 +93,7 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 		b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
 		b.Tiles[newPos].Occupied = true
 		b.Tiles[pos].Occupied = false
+
 		return true
 	} else if y1 == y2 {
 		if x1 < x2 {
@@ -104,9 +101,7 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 				if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 					continue
 				} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-					b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-					b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-					b.Tiles[pos].Occupied = false
+					p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 					fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 					return true
 				} else {
@@ -115,18 +110,14 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 				}
 
 			}
-			b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-			b.Tiles[newPos].Occupied = true
-			b.Tiles[pos].Occupied = false
+			p.Move(pos, newPos, b)
 			return true
 		}
 		for i := x1 - 1; i >= x2; i-- {
 			if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 				continue
 			} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-				b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-				b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-				b.Tiles[pos].Occupied = false
+				p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 				fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 				return true
 			} else {
@@ -134,9 +125,7 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 				return false
 			}
 		}
-		b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-		b.Tiles[newPos].Occupied = true
-		b.Tiles[pos].Occupied = false
+		p.Move(pos, newPos, b)
 		return true
 	} else if (x1-x2)*(x1-x2) == (y1-y2)*(y1-y2) {
 		if x1 < x2 {
@@ -146,9 +135,7 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -160,9 +147,7 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -179,9 +164,7 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -193,9 +176,7 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -205,27 +186,9 @@ func (p *Queen) MoveIfValid(pos string, newPos string, b *Board) bool {
 				}
 			}
 		}
-		b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-		b.Tiles[newPos].Occupied = true
-		b.Tiles[pos].Occupied = false
+		p.Move(pos, newPos, b)
 		return true
 	}
 	fmt.Println("Move not valid. Queen must move as horse, bishop or tower.")
 	return false
-}
-
-//IsPiece returns the kind and colour of the piece
-func (p *Queen) IsPiece() string {
-	if p.IsWhite {
-		return "White Queen"
-	}
-	return "Black Queen"
-}
-
-//IsUnicode prints unicode carachter
-func (p *Queen) IsUnicode() string {
-	if !p.IsWhite {
-		return `♕`
-	}
-	return `♛`
 }

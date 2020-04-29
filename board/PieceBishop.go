@@ -11,8 +11,10 @@ type Bishop struct {
 }
 
 //Move moves the piece to its new location if possible
-func (p *Bishop) Move(pos string, newPos string) {
-
+func (p *Bishop) Move(from string, to string, b *Board) {
+	b.Tiles[to].Piece, b.Tiles[from].Piece = b.Tiles[from].Piece, b.Tiles[to].Piece
+	b.Tiles[to].Occupied = true
+	b.Tiles[from].Occupied = false
 }
 
 //White tells if piece is white
@@ -63,9 +65,7 @@ func (p *Bishop) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -77,9 +77,7 @@ func (p *Bishop) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -96,9 +94,7 @@ func (p *Bishop) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -110,9 +106,7 @@ func (p *Bishop) MoveIfValid(pos string, newPos string, b *Board) bool {
 					if !b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied {
 						continue
 					} else if b.Tiles[fmt.Sprint(i, ntol[y1])].Piece.White() != p.IsWhite {
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[fmt.Sprint(i, ntol[y1])].Piece
-						b.Tiles[fmt.Sprint(i, ntol[y1])].Occupied = true
-						b.Tiles[pos].Occupied = false
+						p.Move(pos, fmt.Sprint(i, ntol[y1]), b)
 						fmt.Printf("%v captured in: %v%v\n", b.Tiles[pos].Piece.IsPiece(), i, ntol[y1])
 						return true
 					} else {
@@ -122,9 +116,7 @@ func (p *Bishop) MoveIfValid(pos string, newPos string, b *Board) bool {
 				}
 			}
 		}
-		b.Tiles[newPos].Piece, b.Tiles[pos].Piece = b.Tiles[pos].Piece, b.Tiles[newPos].Piece
-		b.Tiles[newPos].Occupied = true
-		b.Tiles[pos].Occupied = false
+		p.Move(pos, newPos, b)
 		return true
 	}
 	fmt.Print("Move is not valid. Bishop can only move in diagonal lines.")
